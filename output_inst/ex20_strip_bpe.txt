@@ -1,0 +1,13 @@
+endbr64, sub_rsp_8, mov_rax_qword_ptr_[rip+0x2@@ fe@@ 9], test_rax_rax, je_4, call_rax, add_rsp_8, ret
+push_qword_ptr_[r@@ ip+0x2@@ fe@@ 2], jmp@@ _qword_ptr_[rip+0x2@@ fe@@ 4@@ ]
+jmp@@ _qword_ptr_[rip+0x2@@ fe@@ 2@@ ]
+endbr64, xor_ebp_ebp, mov_r9_rdx, pop_rsi, mov_rdx_rsp, and_rsp_0xfffffffffffffff0, push_rax, push_rsp, mov_r8@@ _0x40@@ 11d@@ 0, mov_rcx@@ _0x40@@ 11@@ 60, mov_rdi@@ _0x40@@ 113@@ 0, call_qword_ptr_[rip+0x2@@ f8@@ 2], hlt
+endbr64, ret
+mov_eax_0x40@@ 40@@ 30, cmp_rax@@ _0x40@@ 40@@ 30, je_0x15, mov_eax_0, test_rax_rax, je_0xb, mov_edi_0x40@@ 40@@ 30, jmp_rax, ret
+mov_esi_0x40@@ 40@@ 30, sub_rsi@@ _0x40@@ 40@@ 30, mov_rax_rsi, shr_rsi@@ _0x3f, sar_rax_3, add_rsi_rax, sar_rsi_1, je_0x13, mov_eax_0, test_rax_rax, je_9, mov_edi_0x40@@ 40@@ 30, jmp_rax, ret
+endbr64, cmp_byte_ptr_[rip+0x2@@ f@@ 35@@ ]_0, jne_0x15, push_rbp, mov_rbp_rsp, call_0xffffffffffffff@@ 7f, mov_byte_ptr_[rip+0x2@@ f@@ 23@@ ]_1, pop_rbp, ret, ret
+endbr64, jmp_0xffffffffffffff8@@ c
+push_rbp, mov_rbp_rsp, sub_rsp_0x10, mov_dword_ptr_[rbp-4]_0, movabs@@ _rdi@@ _0x40@@ 200@@ 4, mov@@ _al_0, call_0xfffffffffffffee@@ 5, xor_ecx_ecx, mov_dword_ptr_[rbp-8]_eax, mov_eax_ecx, add_rsp_0x10, pop_rbp, ret
+endbr64, push_r15, lea_r15_[rip+0x@@ 2c@@ a3], push_r14, mov_r14_rdx, push_r13, mov_r13_rsi, push_r12, mov_r12d_edi, push_rbp, lea_rbp_[rip+0x@@ 2c@@ 94], push_rbx, sub_rbp@@ _r15, sub_rsp_8, call_0xfffffffffffffe@@ 74, sar@@ _rbp@@ _3, je_0x21, xor_ebx_ebx, mov_rdx_r14, mov_rsi_r13, mov_edi_r12d, call_qword_ptr_[r@@ 15+r@@ bx*8], add_rbx_1, cmp_rbp_rbx, jne_0xffffffffffffffec, add_rsp_8, pop_rbx, pop_rbp, pop_r12, pop_r13, pop_r14, pop_r15, ret
+endbr64, ret
+endbr64, sub_rsp_8, add_rsp_8, ret

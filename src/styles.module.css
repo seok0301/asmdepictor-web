@@ -1,0 +1,169 @@
+:root {
+    --button-color: #e3ba8f;
+    --button-active-color: #b58c60;
+  }
+
+.btn {
+    border-radius: 10px;
+    font-size: medium;
+    background-color: var(--button-color);
+    border: solid 2px;
+    border-radius: 5px;
+    padding: 8px;
+}
+
+.btn:active {
+    box-shadow: 0 0 var(--button-active-color);
+    background-color: var(--button-active-color);
+}
+
+.btn:hover {
+    cursor: pointer;
+}
+
+.textfont {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    margin-left: 5px;
+}
+
+.box {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background-color: var(--button-color);
+    border: solid 2px;
+    border-radius: 5px;
+    width: 700px;
+    margin: 0;
+}
+
+.text {
+    margin-left: 0.7%;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.codebox {
+    border: solid 2px;
+    border-radius: 5px;
+    resize: none;
+    width: 680px;
+    margin: 0px 5px 2px 5px;
+}
+
+.timer {
+    margin-left: 30px;
+}
+
+.wrapper {
+    width: 900px;
+    display: flex;
+    justify-content: space-around;
+    align-content: flex-start;
+}
+
+.upload_label {
+    margin-left: 10px;
+    padding: 0px 5px;
+    border-radius: 10px;
+    font-size: 15px;
+    background-color: var(--button-color);
+    border: solid 1px;
+    border-radius: 5px;
+}
+
+.upload_delete_button{
+    margin-left: 10px;
+    padding: 0px 5px;
+    border-radius: 10px;
+    font-size: 15px;
+    border-radius: 10px;
+    font-size: medium;
+    background-color: var(--button-color);
+    border: solid 1px;
+    border-radius: 5px;
+}
+
+
+.upload_label:active{
+    box-shadow: 0 0 var(--button-active-color);
+    background-color: var(--button-active-color);
+}
+
+.upload_delete_button:active{
+    box-shadow: 0 0 var(--button-active-color);
+    background-color: var(--button-active-color);
+}
+
+.upload_input {
+    position:absolute;
+    clip:rect(0, 0, 0, 0);
+}
+
+.upload_label:hover {
+    cursor: pointer;
+}
+
+.upload_delete_button:hover {
+    cursor: pointer;
+}
+
+
+
+
+.wrapper>* {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid black;
+}
+
+.analysis_info {
+    padding-left: 10px;
+}
+
+
+
+
+
+
+.toggle_button {
+    width: 22px;
+    height: 22px;
+    margin-left: 5px;
+    border-radius: 10px;
+    font-size: 15px;
+    background-color: var(--button-color);
+    border: solid 1px;
+    border-radius: 5px;
+}
+
+.toggle_button:active{
+    box-shadow: 0 0 var(--button-active-color);
+    background-color: var(--button-active-color);
+}
+
+.toggle_button:hover {
+    cursor: pointer;
+}
+
+
+
+
+
+
+.inst_too_long {
+    padding-left: 10px;
+    font-size: 0.7em;
+}
+
+
+
+
+
+
+
+.correct {
+    color: green;
+}
+
+.wrong {
+    color: red;
+}
