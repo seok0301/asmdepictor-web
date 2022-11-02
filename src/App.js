@@ -298,47 +298,44 @@ function App() {
   // 결과 네모 하나 하나 렌더링하는 함수
   const Result = ({ idx, item }) => {
     return (
-      <div key={idx} >
-        <br></br>
-        <div className={styles.box}>
-          <table>
-            <tbody>
-              <tr>
-                <td className={styles.text}>Model Prediction:</td>
-                <td className={styles.text} style={{ width: "400px" }}><b>&ensp;{item.func}</b></td>
-                <td className={styles.text}>&ensp;{correctList[idx] ? <b className="correct" style={{ color: "green" }}>Correct</b> : <b className="wrong" style={{ color: "red" }}>Wrong</b>}</td>
-              </tr>
-              <tr>
-                <td className={styles.text}>Function Name:</td>
-                <td className={styles.text}><b>&ensp;{item.name}</b></td>
-              </tr>
-              <tr>
-                <td className={styles.text}>Function start address:</td>
-                <td className={styles.text}><b>&ensp;{item.addr}</b></td>
-              </tr>
-              <tr>
-                <td className={styles.text}>Function end address:</td>
-                <td className={styles.text}><b>&ensp;{item.ret}</b></td>
-              </tr>
-              <tr>
-                <td className={styles.text}>Function size:</td>
-                <td className={styles.text}><b>&ensp;{item.size}</b></td>
-              </tr>
-              <tr>
-                <td className={styles.text}>Number of instructions:</td>
-                <td className={styles.text}><b>&ensp;{item.num}</b></td>
-              </tr>
-              <tr>
-                <td className={styles.text}>Instructions:</td>
-                <td className={styles.text}>
-                  <button className={styles.toggle_button} onClick={() => toggleInstruction(idx)}>{isToggled[idx] ? "-" : "+"}</button>
-                  {item.long ? <span className={styles.inst_too_long}>* Instruction is too long, so it is truncated and used for prediction.</span> : ""}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          {isToggled[idx] && <textarea className={styles.codebox} value={item.inst} disabled rows="10"></textarea>}
-        </div>
+      <div key={idx} className={styles.resultBox}>
+        <table className={styles.resultTable}>
+          <tbody>
+            <tr>
+              <td>Model Prediction:</td>
+              <td style={{ width: "400px" }}><b>&ensp;{item.func}</b></td>
+              <td>&ensp;{correctList[idx] ? <b className="correct" style={{ color: "green" }}>Correct</b> : <b className="wrong" style={{ color: "red" }}>Wrong</b>}</td>
+            </tr>
+            <tr>
+              <td>Function Name:</td>
+              <td><b>&ensp;{item.name}</b></td>
+            </tr>
+            <tr>
+              <td>Function start address:</td>
+              <td><b>&ensp;{item.addr}</b></td>
+            </tr>
+            <tr>
+              <td>Function end address:</td>
+              <td><b>&ensp;{item.ret}</b></td>
+            </tr>
+            <tr>
+              <td>Function size:</td>
+              <td><b>&ensp;{item.size}</b></td>
+            </tr>
+            <tr>
+              <td>Number of instructions:</td>
+              <td><b>&ensp;{item.num}</b></td>
+            </tr>
+            <tr>
+              <td>Instructions:</td>
+              <td>
+                <button className={styles.toggle_button} onClick={() => toggleInstruction(idx)}>{isToggled[idx] ? "-" : "+"}</button>
+                {item.long ? <span className={styles.inst_too_long}>* Instruction is too long, so it is truncated and used for prediction.</span> : ""}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        {isToggled[idx] && <textarea className={styles.codebox} value={item.inst} disabled rows="10"></textarea>}
       </div>
     );
   }
@@ -346,34 +343,32 @@ function App() {
   // 결과 네모 하나 하나 렌더링하는 함수
   const StrippedResult = ({ idx, item }) => {
     return (
-      <div key={idx} >
-        <br></br>
-        <div className={styles.box}>
-          <table>
+      <div key={idx} className={styles.strippedResultBox}>
+      <table className={styles.strippedResultTable}>
             <tbody>
               <tr>
-                <td className={styles.text}>Model Prediction:</td>
-                <td className={styles.text}><b>&ensp;{item.func}</b></td>
+                <td>Model Prediction:</td>
+                <td><b>&ensp;{item.func}</b></td>
               </tr>
               <tr>
-                <td className={styles.text}>Function start address:</td>
-                <td className={styles.text}><b>&ensp;{item.addr}</b></td>
+                <td>Function start address:</td>
+                <td><b>&ensp;{item.addr}</b></td>
               </tr>
               <tr>
-                <td className={styles.text}>Function end address:</td>
-                <td className={styles.text}><b>&ensp;{item.ret}</b></td>
+                <td>Function end address:</td>
+                <td><b>&ensp;{item.ret}</b></td>
               </tr>
               <tr>
-                <td className={styles.text}>Function size:</td>
-                <td className={styles.text}><b>&ensp;{item.size}</b></td>
+                <td>Function size:</td>
+                <td><b>&ensp;{item.size}</b></td>
               </tr>
               <tr>
-                <td className={styles.text}>Number of instructions:</td>
-                <td className={styles.text}><b>&ensp;{item.num}</b></td>
+                <td>Number of instructions:</td>
+                <td><b>&ensp;{item.num}</b></td>
               </tr>
               <tr>
-                <td className={styles.text}>Instructions:</td>
-                <td className={styles.text}>
+                <td>Instructions:</td>
+                <td>
                   <button className={styles.toggle_button} onClick={() => toggleInstruction(idx)}>{isToggled[idx] ? "-" : "+"}</button>
                   {item.long ? <span className={styles.inst_too_long}>* Instruction is too long, so it is truncated and used for prediction.</span> : ""}
                 </td>
@@ -382,7 +377,6 @@ function App() {
           </table>
           {isToggled[idx] && <textarea className={styles.codebox} value={item.inst} disabled rows="10"></textarea>}
         </div>
-      </div>
     );
   }
 
@@ -390,7 +384,7 @@ function App() {
     let accuracy = (correct / functionNumber) * 100;
     accuracy = accuracy.toFixed(2);
     return (
-      <div>
+      <div className={styles.accuracy}>
         <h4>Model Accuracy: {accuracy}% &#40;{correct}/{functionNumber}&#41;</h4>
       </div>
     );
@@ -401,13 +395,17 @@ function App() {
   const ShowResult = () => {
     if (loadingFinish) {
       return (
-        <div>
-          <h2>Analysis Results</h2>
-          <h3>{binaryAnalysisResult.length} Functions.</h3>
-          <Accuracy />
-          {binaryAnalysisResult.map((item, idx) => (
-            <Result key={idx} idx={idx} item={item} />
-          ))}
+        <div className={styles.showResult}>
+          <div className={styles.showResultInfo}>
+            <h2>Analysis Results</h2>
+            <h3>{binaryAnalysisResult.length} Functions.</h3>
+            <Accuracy />
+          </div>
+          <div className={styles.showResultItem}>
+            {binaryAnalysisResult.map((item, idx) => (
+              <Result key={idx} idx={idx} item={item} />
+            ))}
+          </div>
         </div>
       );
     }
@@ -416,13 +414,17 @@ function App() {
   const ShowResultStripped = () => {
     if (loadingFinish) {
       return (
-        <div>
-          <h2>Analysis Results</h2>
-          <h3>Stripped Binary File.</h3>
-          <h3>{binaryAnalysisResult.length} Functions.</h3>
-          {binaryAnalysisResult.map((item, idx) => (
-            <StrippedResult key={idx} idx={idx} item={item} />
-          ))}
+        <div className={styles.showResultStripped}>
+          <div className={styles.showResultStrippedInfo}>
+            <h2>Analysis Results</h2>
+            <h3>Stripped Binary File.</h3>
+            <h3>{binaryAnalysisResult.length} Functions.</h3>
+          </div>
+          <div className={styles.showResultStrippedItem}>
+            {binaryAnalysisResult.map((item, idx) => (
+              <StrippedResult key={idx} idx={idx} item={item} />
+            ))}
+          </div>
         </div>
       );
     }
@@ -433,16 +435,16 @@ function App() {
       <div>
         <header>
           <h1>AsmDepictor</h1>
-          <h3>AsmDepictor information</h3>
-          <span>The file size limit is 2mb, and the analysis time limit is 60 seconds.</span><br></br>
-          <span>If there is a timeout, upload a smaller file.</span><br></br>
-          <span>The file formats that can be analyzed are ELF, 64-bit, and x86-64.</span>
+          <h2>AsmDepictor information</h2>
+          <span>The file size limit is 2mb, and the analysis time limit is 60 seconds.<br></br>
+            If there is a timeout, upload a smaller file.<br></br>
+            The file formats that can be analyzed are ELF, 64-bit, and x86-64.</span>
         </header>
 
         <hr></hr>
 
         <div className={styles.wrapper}>
-          <section>
+          <section className={styles.uploadBinaryFile}>
             <h4>Upload your binary file</h4>
             <input type="text" disabled="disabled" value={selectedFileName} />
             <label className={styles.upload_label} htmlFor={isLoading ? null : "file"}>Upload</label>
@@ -450,9 +452,9 @@ function App() {
             <input className={styles.upload_delete_button} type="button" value="Delete" onClick={onFileDelete} />
           </section>
 
-          <section>
+          <section className={styles.exampleBinaryFile}>
             <h4>Or check out one of these samples</h4>
-            <select disabled={isLoading} value={selectExampleFile} onChange={SelectBinaryFile}>
+            <select className={styles.exampleSelect} disabled={isLoading} value={selectExampleFile} onChange={SelectBinaryFile}>
               <option value="0">Select Example File</option>
               <option value="1">{example_list[1]}</option>
               <option value="2">{example_list[2]}</option>
@@ -467,9 +469,9 @@ function App() {
             <input className={styles.upload_delete_button} type="button" value="Delete" onClick={onSelectedFileDelete} />
           </section>
 
-          <section>
+          <section className={styles.selectModel}>
             <h4>Select the model</h4>
-            <select disabled={isLoading} value={selectModel} onChange={SelectModel}>
+            <select className={styles.modelSelect} disabled={isLoading} value={selectModel} onChange={SelectModel}>
               <option value="0">Select Model</option>
               <option value="1">{model_list[1]}</option>
               <option value="2">{model_list[2]}</option>
@@ -478,7 +480,7 @@ function App() {
           </section>
 
           <button
-            className={styles.btn}
+            className={styles.AnalysisButton}
             onClick={AnalysisButtonClick}>
             Analysis
           </button>
@@ -489,21 +491,19 @@ function App() {
 
   const AnalysisInfo = () => {
     return (
-      <div>
-        <p className={styles.analysis_info}>
-          Analyzing {selectedFileNameForNoRendering}... {sec}s
-          <br></br>
-          Analyzing binary file{analysisFinish ? "... done" : ".".repeat((sec % 3) + 1)}
-          <br></br>
-          {!analysisFinish ? "Predicting function name..." : predictionFinish ? "Predicting function name... done" : "Predicting function name" + ".".repeat((sec % 3) + 1)}
-        </p>
+      <div className={styles.analysis_info}>
+        Analyzing {selectedFileNameForNoRendering}... {sec}s
+        <br></br>
+        Analyzing binary file{analysisFinish ? "... done" : ".".repeat((sec % 3) + 1)}
+        <br></br>
+        {!analysisFinish ? "Predicting function name..." : predictionFinish ? "Predicting function name... done" : "Predicting function name" + ".".repeat((sec % 3) + 1)}
       </div>
     )
   }
 
   // 전체 렌더링
   return (
-    <div className={styles.textfont}>
+    <div>
       <Main />
       {(isLoading || loadingFinish) && <AnalysisInfo />}
       {loadingFinish && (isStripped ? <ShowResultStripped /> : <ShowResult />)}
