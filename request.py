@@ -2,8 +2,6 @@ import requests
 import sys
 import json
 
-MAX_LOG_LENGTH = 1000000
-
 with open('/home/seok/AsmDepictor/asmdepictor-web/function_log.json', 'r') as f:
     function_log = json.load(f)
     
@@ -32,9 +30,6 @@ for idx in range(len(result)):
         print(predict_sentence)
         result[idx]['func'] = predict_sentence
         function_log[result[idx]['inst']] = {"func": predict_sentence, "cnt": 1}
-
-if len(function_log) > MAX_LOG_LENGTH:
-    function_log = {key: value for key, value in function_log.items() if value['cnt'] != 1}
         
 with open('/home/seok/AsmDepictor/asmdepictor-web/' + temp_file_name + ".json", 'w') as f:
     json.dump(result, f)

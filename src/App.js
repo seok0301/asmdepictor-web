@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, {useState, useRef} from "react";
+import React, { useState, useRef } from "react";
 import styles from './styles.module.css'
 
 const PORT = 8088
@@ -7,6 +7,7 @@ const IP = "115.145.172.80"
 const TIMEOUT = 60
 
 const example_list = ["", "diff", "dselect", "ex20_strip", "g-ir-compiler", "lsipc", "lsipc_strip", "ltrace", "lvmlockd", "pf_strip"];
+const stripped_list = [false, false, false, true, false, false, true, false, false, true]
 const model_list = ["", "AsmDepictor1", "AsmDepictor2", "AsmDepictor3"];
 let exampleFileIndex;
 
@@ -62,14 +63,14 @@ function App() {
     if (isLoading) return;
     setselectExampleFile(0);
   }
-  
+
   // analysis button 클릭하여 제대로 file이 들어왔을 경우 실행되는 함수.
   // return값은 response.data, ghidra output json.
-  const onFileUpload = async() => {
+  const onFileUpload = async () => {
     // 만약 selected된 binary file일 경우, ghidra output을 response에 저장.
     ////////////// response에서 시간 넘어간 경우, fail한 경우 처리해주어야함.
     if (parseInt(selectExampleFile)) {
-      const data = {idx: selectExampleFile};
+      const data = { idx: selectExampleFile };
       let response = undefined;
       try {
         response = await axios.post(`http://${IP}:${PORT}/example`, data);
@@ -87,13 +88,13 @@ function App() {
         return response.data;
       }
     }
-  
+
     const formData = new FormData();
     formData.append(
       "file",
       selectedFile
     )
-  
+
     // 만약 select아니면 form에서 데이터 가져와서 post.
     ////////////// response에서 시간 넘어간 경우, fail한 경우 처리해주어야함.
 
@@ -104,7 +105,7 @@ function App() {
       alert("Failed to receive response from server.");
       window.location.reload();
     }
-  
+
     if (response.data["status"] === 1) {
       console.log("Please upload a file that meets the conditions.");
       alert("File formet must be ELF, 64-bit, x86-64.")
@@ -117,6 +118,31 @@ function App() {
       console.log("onFileUpload: file upload success");
       setAnalysisFinish(true);
       return response.data;
+    }
+  }
+
+  // stripped binary인지 아닌지 판단.
+  const DetermineStrippedBinaryFile = async () => {
+    if (selectedFile) {
+      const formData = new FormData();
+      formData.append(
+        "file",
+        selectedFile
+      )
+      let response = undefined;
+      try {
+        response = await axios.post(`http://${IP}:${PORT}/stripped`, formData);
+      } catch {
+        alert("Failed to receive response from server.");
+        window.location.reload();
+      }
+      if (response.data["status"] === 1) {
+        setisStripped(true);
+      } else {
+        setisStripped(false);
+      }
+    } else {
+      setisStripped(stripped_list[exampleFileIndex])
     }
   }
 
@@ -178,21 +204,14 @@ function App() {
       window.location.reload();
     }, TIMEOUT * 1000);
 
+    await DetermineStrippedBinaryFile();
+
     // onFileUpload함수의 결과인 ghidra output data를 result에 저장.
     let result = await onFileUpload();
 
-    // stripped binary인지 아닌지 판단.
-    let strippedFunctionCount = 0;
-    for (let idx in result) {
-      if (result[idx].name.substring(0, 4) === "FUN_") {
-        strippedFunctionCount += 1;
-      }
-    }
-    setisStripped(false);
-    if (strippedFunctionCount * 10 > result.length) setisStripped(true);
-
     let newIsToggled = [];
     // toggle을 위한 배열 초기화.
+    // eslint-disable-next-line
     for (let idx in result) {
       newIsToggled.push(false);
     }
@@ -227,14 +246,14 @@ function App() {
 
     // 함수 크기 계산
     result.forEach(async (item, idx) => {
-        const size = parseInt(item.ret, 16) - parseInt(item.addr - 16);
-        result[idx].size = String(size) + "bytes";
+      const size = parseInt(item.ret, 16) - parseInt(item.addr - 16);
+      result[idx].size = String(size) + "bytes";
     });
 
     // 함수 명령어 개수 계산
     result.forEach(async (item, idx) => {
-        const num = item.inst.split(',').length;
-        result[idx].num = num;
+      const num = item.inst.split(',').length;
+      result[idx].num = num;
     });
 
     // binaryAnalysisResult에 ghidra output data 저장.
@@ -242,6 +261,7 @@ function App() {
 
     let newCorrectList = [];
     // correct rendering을 위한 배열 초기화.
+    // eslint-disable-next-line
     for (let idx in result) {
       newCorrectList.push(false);
     }
@@ -276,7 +296,7 @@ function App() {
   }
 
   // 결과 네모 하나 하나 렌더링하는 함수
-  const Result = ({idx, item}) => {
+  const Result = ({ idx, item }) => {
     return (
       <div key={idx} >
         <br></br>
@@ -285,8 +305,8 @@ function App() {
             <tbody>
               <tr>
                 <td className={styles.text}>Model Prediction:</td>
-                <td className={styles.text} style={{width:"400px"}}><b>&ensp;{item.func}</b></td>
-                <td className={styles.text}>&ensp;{correctList[idx] ? <b className="correct" style={{color:"green"}}>Correct</b> : <b className="wrong" style={{color:"red"}}>Wrong</b>}</td>
+                <td className={styles.text} style={{ width: "400px" }}><b>&ensp;{item.func}</b></td>
+                <td className={styles.text}>&ensp;{correctList[idx] ? <b className="correct" style={{ color: "green" }}>Correct</b> : <b className="wrong" style={{ color: "red" }}>Wrong</b>}</td>
               </tr>
               <tr>
                 <td className={styles.text}>Function Name:</td>
@@ -317,14 +337,14 @@ function App() {
               </tr>
             </tbody>
           </table>
-            {isToggled[idx] && <textarea className={styles.codebox} value={item.inst} disabled rows="10"></textarea>}
+          {isToggled[idx] && <textarea className={styles.codebox} value={item.inst} disabled rows="10"></textarea>}
         </div>
       </div>
     );
   }
 
   // 결과 네모 하나 하나 렌더링하는 함수
-  const StrippedResult = ({idx, item}) => {
+  const StrippedResult = ({ idx, item }) => {
     return (
       <div key={idx} >
         <br></br>
@@ -360,7 +380,7 @@ function App() {
               </tr>
             </tbody>
           </table>
-            {isToggled[idx] && <textarea className={styles.codebox} value={item.inst} disabled rows="10"></textarea>}
+          {isToggled[idx] && <textarea className={styles.codebox} value={item.inst} disabled rows="10"></textarea>}
         </div>
       </div>
     );
@@ -381,12 +401,12 @@ function App() {
   const ShowResult = () => {
     if (loadingFinish) {
       return (
-        <div> 
+        <div>
           <h2>Analysis Results</h2>
           <h3>{binaryAnalysisResult.length} Functions.</h3>
-          <Accuracy/>
+          <Accuracy />
           {binaryAnalysisResult.map((item, idx) => (
-            <Result key={idx} idx={idx} item={item}/>
+            <Result key={idx} idx={idx} item={item} />
           ))}
         </div>
       );
@@ -396,12 +416,12 @@ function App() {
   const ShowResultStripped = () => {
     if (loadingFinish) {
       return (
-        <div> 
+        <div>
           <h2>Analysis Results</h2>
           <h3>Stripped Binary File.</h3>
           <h3>{binaryAnalysisResult.length} Functions.</h3>
           {binaryAnalysisResult.map((item, idx) => (
-            <StrippedResult key={idx} idx={idx} item={item}/>
+            <StrippedResult key={idx} idx={idx} item={item} />
           ))}
         </div>
       );
@@ -424,10 +444,10 @@ function App() {
         <div className={styles.wrapper}>
           <section>
             <h4>Upload your binary file</h4>
-            <input type="text" disabled="disabled" value={selectedFileName}/>
+            <input type="text" disabled="disabled" value={selectedFileName} />
             <label className={styles.upload_label} htmlFor={isLoading ? null : "file"}>Upload</label>
-            <input className={styles.upload_input} type="file" id="file" name="file" onChange={onFileChange}/>
-            <input className={styles.upload_delete_button} type="button" value="Delete" onClick={onFileDelete}/>
+            <input className={styles.upload_input} type="file" id="file" name="file" onChange={onFileChange} />
+            <input className={styles.upload_delete_button} type="button" value="Delete" onClick={onFileDelete} />
           </section>
 
           <section>
@@ -444,7 +464,7 @@ function App() {
               <option value="8">{example_list[8]}</option>
               <option value="9">{example_list[9]}</option>
             </select>
-            <input className={styles.upload_delete_button} type="button" value="Delete" onClick={onSelectedFileDelete}/>
+            <input className={styles.upload_delete_button} type="button" value="Delete" onClick={onSelectedFileDelete} />
           </section>
 
           <section>
@@ -475,7 +495,7 @@ function App() {
           <br></br>
           Analyzing binary file{analysisFinish ? "... done" : ".".repeat((sec % 3) + 1)}
           <br></br>
-          {!analysisFinish  ? "Predicting function name..." : predictionFinish ? "Predicting function name... done" : "Predicting function name" + ".".repeat((sec % 3) + 1)}
+          {!analysisFinish ? "Predicting function name..." : predictionFinish ? "Predicting function name... done" : "Predicting function name" + ".".repeat((sec % 3) + 1)}
         </p>
       </div>
     )
@@ -484,9 +504,9 @@ function App() {
   // 전체 렌더링
   return (
     <div className={styles.textfont}>
-      <Main/>
+      <Main />
       {(isLoading || loadingFinish) && <AnalysisInfo />}
-      {loadingFinish && (isStripped ? <ShowResultStripped/>: <ShowResult/>)}
+      {loadingFinish && (isStripped ? <ShowResultStripped /> : <ShowResult />)}
     </div>
   )
 }
