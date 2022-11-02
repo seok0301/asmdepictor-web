@@ -1,7 +1,6 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-/node_modules
 /.pnp
 .pnp.js
 
@@ -25,6 +24,6 @@ yarn-error.log*
 /node_modules
 /dataset
 /__pycache__
+/ghidra/temp
 
 function_log.json
-/ghidra/temp
