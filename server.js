@@ -351,7 +351,7 @@ app.post('/stripped', upload.single('file'), (req, res) => {
     // file format 검사.
     const { execSync } = require("child_process");
     try {
-        const fileResult = execSync(`readelf ${path} -S | grep debug`,).toString();
+        execSync(`file ${path} | grep "not stripped"`,).toString();
         time = '[' + new Date(+new Date() + 3240 * 10000).toISOString().replace('T', ' ').replace('Z', '') + '] ';
         console.log(time + "Not stripped binary file.");
         res.status(200).send({ "status": 0 });

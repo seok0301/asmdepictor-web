@@ -10,6 +10,7 @@ const example_list = ["", "diff", "dselect", "ex20_strip", "g-ir-compiler", "lsi
 const stripped_list = [false, false, false, true, false, false, true, false, false, true]
 const model_list = ["", "AsmDepictor1", "AsmDepictor2", "AsmDepictor3"];
 let exampleFileIndex;
+let isStripped;
 
 function App() {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -28,7 +29,6 @@ function App() {
   const [loadingFinish, setLoadingFinish] = useState(false);
   const [analysisFinish, setAnalysisFinish] = useState(false);
   const [predictionFinish, setPredictionFinish] = useState(false);
-  const [isStripped, setisStripped] = useState(false);
   const [isToggled, setIsToggled] = useState([]);
 
   const toggleInstruction = (idx) => {
@@ -137,12 +137,12 @@ function App() {
         window.location.reload();
       }
       if (response.data["status"] === 1) {
-        setisStripped(true);
+        isStripped = true;
       } else {
-        setisStripped(false);
+        isStripped = false;
       }
     } else {
-      setisStripped(stripped_list[selectExampleFile]);
+      isStripped = stripped_list[selectExampleFile];
     }
   }
 
@@ -255,7 +255,7 @@ function App() {
       result[idx].size = String(size) + "bytes";
       const num = result[idx].inst.split(',').length;
       result[idx].num = num;
-      if (!stripped_list[selectExampleFile]) {
+      if (!isStripped) {
         result[idx].name_lower = result[idx].name.toLowerCase();
       }
       newCorrectList.push(0);
@@ -264,7 +264,7 @@ function App() {
 
     // correct 개수 세기
     let correctCount = 0;
-    if (!stripped_list[selectExampleFile]) {
+    if (!isStripped) {
       result.forEach(async (item, idx) => {
         const split_list = item.func.split(" ");
         if (!item.dup_funcs.length) {
