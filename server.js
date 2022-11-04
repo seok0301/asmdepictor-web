@@ -3,6 +3,7 @@ const express = require('express');
 const moment = require('moment');
 const cors = require('cors');
 const fs = require('fs');
+const { isCompositeComponent } = require('react-dom/test-utils');
 const PORT = 8088;
 const app = express();
 const TIMEOUT = 60
@@ -14,7 +15,6 @@ app.use(express.urlencoded({
     limit: "50mb",
     extended: false
 }));
-
 
 //서버 따로 유지보수 시에 자동으로 설정 가능한 환경 변수들 가능한 파일
 const GHIDRA_PATH = "/home/seok/ghidra_10.1.5_PUBLIC"

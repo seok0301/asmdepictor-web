@@ -142,7 +142,7 @@ function App() {
         setisStripped(false);
       }
     } else {
-      setisStripped(stripped_list[exampleFileIndex])
+      setisStripped(stripped_list[selectExampleFile]);
     }
   }
 
@@ -205,7 +205,6 @@ function App() {
     }, TIMEOUT * 1000);
 
     await DetermineStrippedBinaryFile();
-
     // onFileUpload함수의 결과인 ghidra output data를 result에 저장.
     let result = await onFileUpload();
 
@@ -244,48 +243,67 @@ function App() {
     result = result.data;
     setPredictionFinish(true);
 
-    // 함수 크기 계산
-    result.forEach(async (item, idx) => {
-      const size = parseInt(item.ret, 16) - parseInt(item.addr - 16);
-      result[idx].size = String(size) + "bytes";
-    });
-
-    // 함수 명령어 개수 계산
-    result.forEach(async (item, idx) => {
-      const num = item.inst.split(',').length;
-      result[idx].num = num;
-    });
-
     // binaryAnalysisResult에 ghidra output data 저장.
     setBinaryAnalysisResult(result);
 
+    // 함수 크기 계산, 함수 명령어 계산, 함수명 lower case로 변경
     let newCorrectList = [];
     // correct rendering을 위한 배열 초기화.
     // eslint-disable-next-line
     for (let idx in result) {
-      newCorrectList.push(false);
+      const size = parseInt(result[idx].ret, 16) - parseInt(result[idx].addr - 16);
+      result[idx].size = String(size) + "bytes";
+      const num = result[idx].inst.split(',').length;
+      result[idx].num = num;
+      if (!stripped_list[selectExampleFile]) {
+        result[idx].name_lower = result[idx].name.toLowerCase();
+      }
+      newCorrectList.push(0);
     }
     setCorrectList(newCorrectList);
 
     // correct 개수 세기
     let correctCount = 0;
-    result.forEach(async (item, idx) => {
-      const split_list = item.func.split(" ");
-      let flag = true;
-      split_list.forEach(item => {
-        if (!result[idx].name.includes(item)) {
-          flag = false;
-          return false;
+    if (!stripped_list[selectExampleFile]) {
+      result.forEach(async (item, idx) => {
+        const split_list = item.func.split(" ");
+        if (!item.dup_funcs.length) {
+          let cnt = 0;
+          split_list.forEach(item => {
+            if (result[idx].name_lower.includes(item)) {
+              cnt += 1;
+            }
+          })
+          const score = parseFloat((cnt / split_list.length).toFixed(2));
+          correctCount += score;
+          newCorrectList[idx] = score;
+        } else {
+          let score_list = []
+          item.dup_funcs.forEach(async (f, i) => {
+            const split_list = f.split(" ");
+            let cnt = 0;
+            split_list.forEach(splited => {
+              if (result[idx].name_lower.includes(splited)) {
+                cnt += 1;
+              }
+            })
+            const score = parseFloat((cnt / split_list.length).toFixed(2));
+            score_list[i] = score;
+          });
+          const score = Math.max(...score_list);
+          correctCount += score;
+          result[idx].dup_funcs = item.dup_funcs.sort((a, b) =>
+            score_list[item.dup_funcs.indexOf(b)] - score_list[item.dup_funcs.indexOf(a)]);
+          newCorrectList[idx] = score;
         }
-      })
-      if (flag) {
-        newCorrectList[idx] = true;
-        correctCount += 1;
-      }
-    });
-    setCorrect(correctCount);
+      });
+    }
+
+    // binaryAnalysisResult에 ghidra output data 저장.
+    setCorrect(parseInt(correctCount));
     setCorrectList(newCorrectList);
     setFunctionNumber(result.length);
+    setBinaryAnalysisResult(result);
 
     // 끝났으면 timer종료.
     console.log(result);
@@ -303,28 +321,28 @@ function App() {
           <tbody>
             <tr>
               <td>Model Prediction:</td>
-              <td style={{ width: "400px" }}><b>&ensp;{item.func}</b></td>
-              <td>&ensp;{correctList[idx] ? <b className="correct" style={{ color: "green" }}>Correct</b> : <b className="wrong" style={{ color: "red" }}>Wrong</b>}</td>
+              <td style={{ width: "400px" }}><b>{item.dup_funcs.length ? item.dup_funcs.join(", ") : item.func}</b></td>
+              <td>{correctList[idx] >= 0.5 ? <b className="correct" style={{ color: "green" }}>{correctList[idx]}</b> : <b className="wrong" style={{ color: "red" }}>{correctList[idx]}</b>}</td>
             </tr>
             <tr>
               <td>Function Name:</td>
-              <td><b>&ensp;{item.name}</b></td>
+              <td><b>{item.name}</b></td>
             </tr>
             <tr>
               <td>Function start address:</td>
-              <td><b>&ensp;{item.addr}</b></td>
+              <td><b>{item.addr}</b></td>
             </tr>
             <tr>
               <td>Function end address:</td>
-              <td><b>&ensp;{item.ret}</b></td>
+              <td><b>{item.ret}</b></td>
             </tr>
             <tr>
               <td>Function size:</td>
-              <td><b>&ensp;{item.size}</b></td>
+              <td><b>{item.size}</b></td>
             </tr>
             <tr>
               <td>Number of instructions:</td>
-              <td><b>&ensp;{item.num}</b></td>
+              <td><b>{item.num}</b></td>
             </tr>
             <tr>
               <td>Instructions:</td>
@@ -344,44 +362,44 @@ function App() {
   const StrippedResult = ({ idx, item }) => {
     return (
       <div key={idx} className={styles.strippedResultBox}>
-      <table className={styles.strippedResultTable}>
-            <tbody>
-              <tr>
-                <td>Model Prediction:</td>
-                <td><b>&ensp;{item.func}</b></td>
-              </tr>
-              <tr>
-                <td>Function start address:</td>
-                <td><b>&ensp;{item.addr}</b></td>
-              </tr>
-              <tr>
-                <td>Function end address:</td>
-                <td><b>&ensp;{item.ret}</b></td>
-              </tr>
-              <tr>
-                <td>Function size:</td>
-                <td><b>&ensp;{item.size}</b></td>
-              </tr>
-              <tr>
-                <td>Number of instructions:</td>
-                <td><b>&ensp;{item.num}</b></td>
-              </tr>
-              <tr>
-                <td>Instructions:</td>
-                <td>
-                  <button className={styles.toggle_button} onClick={() => toggleInstruction(idx)}>{isToggled[idx] ? "-" : "+"}</button>
-                  {item.long ? <span className={styles.inst_too_long}>* Instruction is too long, so it is truncated and used for prediction.</span> : ""}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          {isToggled[idx] && <textarea className={styles.codebox} value={item.inst} disabled rows="10"></textarea>}
-        </div>
+        <table className={styles.strippedResultTable}>
+          <tbody>
+            <tr>
+              <td>Model Prediction:</td>
+              <td><b>{item.dup_funcs.length ? item.dup_funcs.join(", ") : item.func}</b></td>
+            </tr>
+            <tr>
+              <td>Function start address:</td>
+              <td><b>{item.addr}</b></td>
+            </tr>
+            <tr>
+              <td>Function end address:</td>
+              <td><b>{item.ret}</b></td>
+            </tr>
+            <tr>
+              <td>Function size:</td>
+              <td><b>{item.size}</b></td>
+            </tr>
+            <tr>
+              <td>Number of instructions:</td>
+              <td><b>{item.num}</b></td>
+            </tr>
+            <tr>
+              <td>Instructions:</td>
+              <td>
+                <button className={styles.toggle_button} onClick={() => toggleInstruction(idx)}>{isToggled[idx] ? "-" : "+"}</button>
+                {item.long ? <span className={styles.inst_too_long}>* Instruction is too long, so it is truncated and used for prediction.</span> : ""}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        {isToggled[idx] && <textarea className={styles.codebox} value={item.inst} disabled rows="10"></textarea>}
+      </div>
     );
   }
 
   const Accuracy = () => {
-    let accuracy = (correct / functionNumber) * 100;
+    let accuracy = ((correct / functionNumber) * 100);
     accuracy = accuracy.toFixed(2);
     return (
       <div className={styles.accuracy}>

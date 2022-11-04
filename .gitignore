@@ -24,6 +24,6 @@ yarn-error.log*
 /node_modules
 /dataset
 /__pycache__
-/ghidra/temp
+/ghidra/tmp
 
 function_log.json
