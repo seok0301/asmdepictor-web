@@ -36,7 +36,6 @@ button:hover {
     background-color: var(--button-color);
     border: solid 2px;
     border-radius: 5px;
-    width: 700px;
     margin: 0;
 }
 
@@ -44,7 +43,6 @@ button:hover {
     border: solid 2px;
     border-radius: 5px;
     resize: none;
-    width: 680px;
     margin: 0px 5px 2px 5px;
 }
 

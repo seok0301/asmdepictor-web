@@ -321,8 +321,8 @@ function App() {
           <tbody>
             <tr>
               <td>Model Prediction:</td>
-              <td style={{ width: "400px" }}><b>{item.dup_funcs.length ? item.dup_funcs.join(", ") : item.func}</b></td>
-              <td>{correctList[idx] >= 0.5 ? <b className="correct" style={{ color: "green" }}>{correctList[idx]}</b> : <b className="wrong" style={{ color: "red" }}>{correctList[idx]}</b>}</td>
+              <td><b>{item.dup_funcs.length ? item.dup_funcs.join(", ") : item.func}</b></td>
+              <td>{correctList[idx] >= 0.5 ? <b className="correct" style={{ color: "green", float: "right"}}>{correctList[idx]}</b> : <b className="wrong" style={{ color: "red", float: "right"}}>{correctList[idx]}</b>}</td>
             </tr>
             <tr>
               <td>Function Name:</td>
