@@ -14,7 +14,8 @@ with open('/home/seok/AsmDepictor/asmdepictor-web/' + temp_file_name + '.json', 
     result = json.load(f)
 
 for idx in range(len(result)):
-    print(f"Predicting...\t{idx + 1} / {len(result)}", end='\r')
+    print(len(result))
+    # print(f"Predicting...\t{idx + 1} / {len(result)}", end='\r')
     
     # 300자 이상 함수 자르고 long True 선언
     result[idx]['long'] = False

@@ -1,78 +1,124 @@
 * {
     margin: 0px;
     padding: 0px;
+    --button-active-color: #535353;
+    --button-color: #D6D8D9;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
-:root {
-    --button-color: #e3ba8f;
-    --button-active-color: #b58c60;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+.parent {
     display: flex;
     flex-direction: column;
     align-items: center;
-  }
-
-button {
-    border-radius: 10px;
-    font-size: medium;
-    background-color: var(--button-color);
-    border: solid 2px;
-    border-radius: 5px;
-    padding: 8px;
+    margin: 0 auto;
+    width: 900px;
 }
 
-button:hover {
-    box-shadow: 0 0 var(--button-active-color);
-    background-color: var(--button-active-color);
-    cursor: pointer;
+
+
+
+
+
+
+header h1 {
+    padding: 15px;
+    color: white;
+    font-weight: 500;
+    background: #282828;
 }
 
-.textfont {
-    margin-left: 5px;
+header h2 {
+    padding: 15px;
+    color: white;
+    font-weight: 400;
+    font-size: 1em;
+    background: #535353;
 }
 
-.box {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    background-color: var(--button-color);
-    border: solid 2px;
-    border-radius: 5px;
-    margin: 0;
+header h3 {
+    padding: 10px;
+    background-color: #D6D8D9;
+    margin: 20px;
+    border-radius: 8px;
+    font-weight: 400;
+    padding: 15px;
 }
 
-.codebox {
-    border: solid 2px;
-    border-radius: 5px;
-    resize: none;
-    margin: 0px 5px 2px 5px;
-}
+
+
+
+
+
+
 
 .wrapper {
-    width: 900px;
     display: flex;
-    justify-content: space-around;
-    align-content: flex-start;
+    width: 900px;
+}
+
+
+.wrapper>* {
+    display: flex;
+    padding: 10px;
+}
+
+.setting {
+    flex-direction: column;
+    flex: 2;
+}
+
+.analysis_info {
+    flex: 1;
+}
+
+
+
+
+
+.uploadBinaryFile {
+    padding: 10px;
+}
+
+
+.uploadBinaryFile div{
+    display: flex;
+
+}
+
+.uploadBinaryFile h4{
+    margin: 10px;
+    font-size: 20px;
+}
+
+.upload_text {
+    margin: 10px;
+    font-size: 20px;
+    padding: 5px 10px;
+    border: 2px solid grey;
+    border-radius: 8px;
+    color: black;
+    flex: 3;
 }
 
 .upload_label {
-    margin-left: 10px;
-    padding: 0px 5px;
-    border-radius: 10px;
-    font-size: 15px;
+    margin: 10px;
+    font-size: 20px;
+    padding: 5px 0px;
+    text-align: center;
     background-color: var(--button-color);
-    border: solid 1px;
-    border-radius: 5px;
+    border: solid 2px;
+    border-radius: 8px;
+    flex: 1;
 }
 
 .upload_delete_button{
-    margin-left: 10px;
-    padding: 0px 5px;
-    border-radius: 10px;
-    font-size: 15px;
-    border-radius: 10px;
-    font-size: medium;
+    margin: 10px;
+    font-size: 20px;
+    text-align: center;
     background-color: var(--button-color);
-    border: solid 1px;
-    border-radius: 5px;
+    border: solid 2px;
+    border-radius: 8px;
+    flex: 1;
 }
 
 
@@ -92,25 +138,235 @@ button:hover {
 }
 
 .upload_label:hover {
+    box-shadow: 0 0 var(--button-active-color);
+    background-color: var(--button-active-color);
     cursor: pointer;
 }
 
 .upload_delete_button:hover {
+    box-shadow: 0 0 var(--button-active-color);
+    background-color: var(--button-active-color);
     cursor: pointer;
 }
 
 
 
 
-.wrapper>* {
+
+
+
+
+.exampleBinaryFile {
     padding: 10px;
-    border-radius: 5px;
-    border: 1px solid black;
 }
 
-.analysis_info {
-    padding-left: 10px;
+.exampleBinaryFile div{
+    display: flex;
+
 }
+
+.exampleBinaryFile h4{
+    margin: 10px;
+    font-size: 20px;
+
+}
+
+.exampleSelect {
+    margin: 10px;
+    font-size: 20px;
+    padding: 5px 10px;
+    border: 2px solid grey;
+    outline: none;
+    border-radius: 8px;
+    flex: 4.4;
+}
+
+.example_delete_button{
+    margin: 10px;
+    font-size: 20px;
+    padding-bottom: 5px;
+    text-align: center;
+    background-color: var(--button-color);
+    border: solid 2px;
+    border-radius: 8px;
+    flex: 1;
+}
+
+.example_delete_button:active{
+    box-shadow: 0 0 var(--button-active-color);
+    background-color: var(--button-active-color);
+}
+
+.example_delete_button:hover {
+    box-shadow: 0 0 var(--button-active-color);
+    background-color: var(--button-active-color);
+    cursor: pointer;
+}
+
+
+
+
+
+
+
+.selectModel {
+    padding: 10px;
+}
+
+.selectModel div{
+    display: flex;
+
+}
+
+.selectModel h4{
+    margin: 10px;
+    font-size: 20px;
+
+}
+
+.modelSelect {
+    margin: 10px;
+    font-size: 20px;
+    padding: 5px 10px;
+    border: 2px solid grey;
+    outline: none;
+    border-radius: 8px;
+    flex: 4.4;
+}
+
+.AnalysisButton{
+    margin: 10px;
+    font-size: 20px;
+    padding-bottom: 5px;
+    text-align: center;
+    background-color: var(--button-color);
+    border: solid 2px;
+    border-radius: 8px;
+    flex: 1;
+}
+
+.AnalysisButton:active{
+    box-shadow: 0 0 var(--button-active-color);
+    background-color: var(--button-active-color);
+}
+
+.AnalysisButton:hover {
+    box-shadow: 0 0 var(--button-active-color);
+    background-color: var(--button-active-color);
+    cursor: pointer;
+}
+
+
+
+
+
+
+
+
+.analysis_info div{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.analysis_info div div{
+    flex: 1;
+}
+
+
+
+.accuracy {
+    margin: 30px;
+    text-align: center;
+    background-color: #656565;
+    padding: 20px;
+    border-radius: 8px;
+    border: 2px solid black;
+}
+
+.accuracy h4 {
+    font-weight: 400;
+    font-size: 1.7em;
+    color: white;
+}
+
+.showResultStrippedInfo {
+    text-align: center;
+    background-color: #656565;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.showResultStrippedInfo h3 {
+    font-weight: 400;
+    font-size: 1.7em;
+    color: white;
+}
+
+
+
+
+
+.showResultItem {
+    padding: 10px;
+}
+
+.indexColumn {
+    width: 34%;
+}
+
+.modelPredictionColumn {
+    width: 29%;
+}
+
+.groundtruthColumn {
+    width: 29%;
+}
+
+.scoreColumn {
+    width: 14%;
+}
+
+.infoColumn {
+    width: 10%;
+}
+
+table {
+    margin: 10px auto;
+    border-radius: 40px;
+    font-size: 0.9em;
+    width: 100%;
+	table-layout: fixed;
+    border: 2px solid #444444;
+    border-collapse: collapse;
+}
+
+tr, th, td {
+    word-wrap:break-word;
+    table-layout: fixed;
+    border: 1px solid #444444;
+    padding: 10px;
+    position: relative;
+}
+
+th {
+    border-bottom: 2px solid #444444 ;
+    background-color: #D9D9D9;
+}
+
+.codebox {
+    border: solid 2px;
+    position: absolute;
+    right: 10px;
+    top: 53px;
+    resize: none;
+    z-index: 1;
+    width: 845px;
+    border-radius: 4px;
+    padding: 5px;
+    outline: none;
+}
+
 
 
 
@@ -120,7 +376,6 @@ button:hover {
 .toggle_button {
     width: 22px;
     height: 22px;
-    margin-left: 5px;
     border-radius: 10px;
     font-size: 15px;
     background-color: var(--button-color);
@@ -134,6 +389,8 @@ button:hover {
 }
 
 .toggle_button:hover {
+    box-shadow: 0 0 var(--button-active-color);
+    background-color: var(--button-active-color);
     cursor: pointer;
 }
 
@@ -141,22 +398,3 @@ button:hover {
 
 
 
-
-.inst_too_long {
-    padding-left: 10px;
-    font-size: 0.7em;
-}
-
-
-
-
-
-
-
-.correct {
-    color: green;
-}
-
-.wrong {
-    color: red;
-}

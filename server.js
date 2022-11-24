@@ -67,7 +67,7 @@ app.post('/upload', upload.single('file'), (req, res) => {
     // ghidra output을 output_inst/filename.json에 저장.
     time = '[' + new Date(+new Date() + 3240 * 10000).toISOString().replace('T', ' ').replace('Z', '') + '] ';
     console.log(time + "Ghidra script start.");
-    const execResult = execSync(`python run.py ${GHIDRA_PATH}/support/analyzeHeadless ${ASMDEPICTOR_PATH}/asmdepictor-web/uploads/${filename} 1`,).toString().slice(0, -1);
+    const execResult = execSync(`python3 run.py ${GHIDRA_PATH}/support/analyzeHeadless ${ASMDEPICTOR_PATH}/asmdepictor-web/uploads/${filename} 1`,).toString().slice(0, -1);
     console.log(execResult);
     time = '[' + new Date(+new Date() + 3240 * 10000).toISOString().replace('T', ' ').replace('Z', '') + '] ';
     console.log(time + "Ghidra script end.");
@@ -92,7 +92,7 @@ app.post('/upload', upload.single('file'), (req, res) => {
         // ghidra output json에서 inst를 incode, bytecode inst가 담긴 filename.txt 파일 생성.
         time = '[' + new Date(+new Date() + 3240 * 10000).toISOString().replace('T', ' ').replace('Z', '') + '] ';
         console.log(time + "Ghidra output preprocessing start.");
-        execSync(`python ./decode.py ./output_inst/${filename}.json ${filename}`).toString();
+        execSync(`python3 ./decode.py ./output_inst/${filename}.json ${filename}`).toString();
         let ghidraResult = require(`${ASMDEPICTOR_PATH}/asmdepictor-web/output_inst/${filename}.json`);
 
         // ghidra output json에서 inst가 없는 항목 삭제.
@@ -182,7 +182,7 @@ app.post('/example', (req, res) => {
 
     // ghidra output을 output_inst/filename.json에 저장.
     // const { execSync } = require("child_process");
-    // const execResult = execSync(`python run.py ${GHIDRA_PATH}/support/analyzeHeadless ${ASMDEPICTOR_PATH}/asmdepictor-web/ex_binary_files/${filename} 1`,).toString();
+    // const execResult = execSync(`python3 run.py ${GHIDRA_PATH}/support/analyzeHeadless ${ASMDEPICTOR_PATH}/asmdepictor-web/ex_binary_files/${filename} 1`,).toString();
     // console.log(execResult);
 
     /////////// false말고 숫자로 넣어서 분석 실패인지 시간 초과인지 구분해서 return.
@@ -199,7 +199,7 @@ app.post('/example', (req, res) => {
         // ghidra output json에서 inst를 incode, bytecode inst가 담긴 filename.txt 파일 생성.
         time = '[' + new Date(+new Date() + 3240 * 10000).toISOString().replace('T', ' ').replace('Z', '') + '] ';
         console.log(time + "Ghidra output preprocessing start.");
-        // execSync(`python ./decode.py ./output_inst/${filename}.json ${filename}`).toString();
+        // execSync(`python3 ./decode.py ./output_inst/${filename}.json ${filename}`).toString();
         let ghidraResult = require(`${ASMDEPICTOR_PATH}/asmdepictor-web/output_inst/${filename}.json`);
 
         // ghidra output json에서 inst가 없는 항목 삭제.
@@ -254,7 +254,7 @@ app.post('/predict1', (req, res) => {
     });
 
     const { execSync } = require("child_process");
-    const execResult = execSync(`python ${ASMDEPICTOR_PATH}/asmdepictor-web/request.py ${temp_file_name}`);
+    const execResult = execSync(`python3 ${ASMDEPICTOR_PATH}/asmdepictor-web/request.py ${temp_file_name}`);
 
     result = fs.readFileSync(`${ASMDEPICTOR_PATH}/asmdepictor-web/${temp_file_name}.json`);
     fs.unlink(`${ASMDEPICTOR_PATH}/asmdepictor-web/${temp_file_name}.json`, function (err) {
@@ -286,7 +286,7 @@ app.post('/predict2', (req, res) => {
     });
 
     const { execSync } = require("child_process");
-    const execResult = execSync(`python ${ASMDEPICTOR_PATH}/asmdepictor-web/request.py ${temp_file_name}`);
+    const execResult = execSync(`python3 ${ASMDEPICTOR_PATH}/asmdepictor-web/request.py ${temp_file_name}`);
 
     result = fs.readFileSync(`${ASMDEPICTOR_PATH}/asmdepictor-web/${temp_file_name}.json`);
     fs.unlink(`${ASMDEPICTOR_PATH}/asmdepictor-web/${temp_file_name}.json`, function (err) {
@@ -318,7 +318,7 @@ app.post('/predict3', (req, res) => {
     });
 
     const { execSync } = require("child_process");
-    const execResult = execSync(`python ${ASMDEPICTOR_PATH}/asmdepictor-web/request.py ${temp_file_name}`);
+    const execResult = execSync(`python3 ${ASMDEPICTOR_PATH}/asmdepictor-web/request.py ${temp_file_name}`);
 
     result = fs.readFileSync(`${ASMDEPICTOR_PATH}/asmdepictor-web/${temp_file_name}.json`);
     fs.unlink(`${ASMDEPICTOR_PATH}/asmdepictor-web/${temp_file_name}.json`, function (err) {

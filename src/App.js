@@ -8,7 +8,7 @@ const TIMEOUT = 60
 
 const example_list = ["", "diff", "dselect", "ex20_strip", "g-ir-compiler", "lsipc", "lsipc_strip", "ltrace", "lvmlockd", "pf_strip"];
 const stripped_list = [false, false, false, true, false, false, true, false, false, true]
-const model_list = ["", "AsmDepictor1", "AsmDepictor2", "AsmDepictor3"];
+const model_list = ["", "model1"];
 let exampleFileIndex;
 let isStripped;
 
@@ -24,14 +24,13 @@ function App() {
   const secTimeoutId = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
   const [correct, setCorrect] = useState(0);
-  const [correctList, setCorrectList] = useState([]);
   const [functionNumber, setFunctionNumber] = useState(0);
   const [loadingFinish, setLoadingFinish] = useState(false);
   const [analysisFinish, setAnalysisFinish] = useState(false);
   const [predictionFinish, setPredictionFinish] = useState(false);
   const [isToggled, setIsToggled] = useState([]);
 
-  const toggleInstruction = (idx) => {
+  const toggleInformation = (idx) => {
     let netIsToggled = [...isToggled];
     netIsToggled[idx] = !netIsToggled[idx];
     setIsToggled(netIsToggled);
@@ -247,20 +246,17 @@ function App() {
     setBinaryAnalysisResult(result);
 
     // 함수 크기 계산, 함수 명령어 계산, 함수명 lower case로 변경
-    let newCorrectList = [];
     // correct rendering을 위한 배열 초기화.
     // eslint-disable-next-line
     for (let idx in result) {
       const size = parseInt(result[idx].ret, 16) - parseInt(result[idx].addr - 16);
-      result[idx].size = String(size) + "bytes";
+      result[idx].size = String(size) + " bytes";
       const num = result[idx].inst.split(',').length;
       result[idx].num = num;
       if (!isStripped) {
         result[idx].name_lower = result[idx].name.toLowerCase();
       }
-      newCorrectList.push(0);
     }
-    setCorrectList(newCorrectList);
 
     // correct 개수 세기
     let correctCount = 0;
@@ -276,7 +272,7 @@ function App() {
           })
           const score = parseFloat((cnt / split_list.length).toFixed(2));
           correctCount += score;
-          newCorrectList[idx] = score;
+          result[idx].score = score;
         } else {
           let score_list = []
           item.dup_funcs.forEach(async (f, i) => {
@@ -294,15 +290,16 @@ function App() {
           correctCount += score;
           result[idx].dup_funcs = item.dup_funcs.sort((a, b) =>
             score_list[item.dup_funcs.indexOf(b)] - score_list[item.dup_funcs.indexOf(a)]);
-          newCorrectList[idx] = score;
+          result[idx].score = score;
         }
       });
     }
 
     // binaryAnalysisResult에 ghidra output data 저장.
     setCorrect(parseInt(correctCount));
-    setCorrectList(newCorrectList);
     setFunctionNumber(result.length);
+
+    result = result.filter(item => item.num > 5);
     setBinaryAnalysisResult(result);
 
     // 끝났으면 timer종료.
@@ -314,48 +311,43 @@ function App() {
   }
 
   // 결과 네모 하나 하나 렌더링하는 함수
-  const Result = ({ idx, item }) => {
+  const Result = () => {
     return (
-      <div key={idx} className={styles.resultBox}>
-        <table className={styles.resultTable}>
-          <tbody>
-            <tr>
-              <td>Model Prediction:</td>
-              <td><b>{item.dup_funcs.length ? item.dup_funcs.join(", ") : item.func}</b></td>
-              <td>{correctList[idx] >= 0.5 ? <b className="correct" style={{ color: "green", float: "right"}}>{correctList[idx]}</b> : <b className="wrong" style={{ color: "red", float: "right"}}>{correctList[idx]}</b>}</td>
-            </tr>
-            <tr>
-              <td>Function Name:</td>
-              <td><b>{item.name}</b></td>
-            </tr>
-            <tr>
-              <td>Function start address:</td>
-              <td><b>{item.addr}</b></td>
-            </tr>
-            <tr>
-              <td>Function end address:</td>
-              <td><b>{item.ret}</b></td>
-            </tr>
-            <tr>
-              <td>Function size:</td>
-              <td><b>{item.size}</b></td>
-            </tr>
-            <tr>
-              <td>Number of instructions:</td>
-              <td><b>{item.num}</b></td>
-            </tr>
-            <tr>
-              <td>Instructions:</td>
+      <table>
+        <thead>
+          <tr>
+            <th className={styles.indexColumn}>Index</th>
+            <th className={styles.modelPredictionColumn}>Model Prediction</th>
+            <th className={styles.groundtruthColumn}>Groundtruth</th>
+            <th className={styles.scoreColumn}>Score</th>
+            <th className={styles.infoColumn}>More Info</th>
+          </tr>
+        </thead>
+        <tbody>
+        {binaryAnalysisResult.map((item, idx) => {
+          const candidates = item.dup_funcs.length ? item.dup_funcs.join(", ") : "None";
+          const LongInfo = item.long ?  "\n\n" + "*Instruction is too long, so it is truncated and used for prediction." : "";
+          return (
+            <tr key={idx} style={item.score >= 0.5 ? {backgroundColor: "#CCDDBB"} : {backgroundColor: "#DDBBBB"}}>
+              <td>{item.addr +  " ~ " + item.ret +  " (" + item.size +")"}</td>
+              <td>{item.dup_funcs.length ? item.dup_funcs[0] : item.func}</td>
+              <td>{item.name}</td>
+              <td style={{textAlign: "center"}}>{item.score}</td>
+              <td style={{textAlign: "center"}}><button className={styles.toggle_button} onClick={() => toggleInformation(idx)}>{isToggled[idx] ? "-" : "+"}</button></td>
               <td>
-                <button className={styles.toggle_button} onClick={() => toggleInstruction(idx)}>{isToggled[idx] ? "-" : "+"}</button>
-                {item.long ? <span className={styles.inst_too_long}>* Instruction is too long, so it is truncated and used for prediction.</span> : ""}
+                {isToggled[idx] && <textarea className={styles.codebox} rows="10" defaultValue={
+                  "Model Prediction Candidates: " + candidates + "\n\n" +
+                  "Number of Instructions: " + item.num + "\n\n" +
+                  "Instructions: " + item.inst +
+                  LongInfo
+                }></textarea>}
               </td>
-            </tr>
-          </tbody>
-        </table>
-        {isToggled[idx] && <textarea className={styles.codebox} value={item.inst} disabled rows="10"></textarea>}
-      </div>
+            </tr>);
+        })}
+        </tbody>
+      </table>
     );
+     
   }
 
   // 결과 네모 하나 하나 렌더링하는 함수
@@ -387,7 +379,7 @@ function App() {
             <tr>
               <td>Instructions:</td>
               <td>
-                <button className={styles.toggle_button} onClick={() => toggleInstruction(idx)}>{isToggled[idx] ? "-" : "+"}</button>
+                <button className={styles.toggle_button} onClick={() => toggleInformation(idx)}>{isToggled[idx] ? "-" : "+"}</button>
                 {item.long ? <span className={styles.inst_too_long}>* Instruction is too long, so it is truncated and used for prediction.</span> : ""}
               </td>
             </tr>
@@ -415,14 +407,10 @@ function App() {
       return (
         <div className={styles.showResult}>
           <div className={styles.showResultInfo}>
-            <h2>Analysis Results</h2>
-            <h3>{binaryAnalysisResult.length} Functions.</h3>
             <Accuracy />
           </div>
           <div className={styles.showResultItem}>
-            {binaryAnalysisResult.map((item, idx) => (
-              <Result key={idx} idx={idx} item={item} />
-            ))}
+              <Result />
           </div>
         </div>
       );
@@ -434,9 +422,7 @@ function App() {
       return (
         <div className={styles.showResultStripped}>
           <div className={styles.showResultStrippedInfo}>
-            <h2>Analysis Results</h2>
-            <h3>Stripped Binary File.</h3>
-            <h3>{binaryAnalysisResult.length} Functions.</h3>
+            <h3 >Stripped Binary File.</h3>
           </div>
           <div className={styles.showResultStrippedItem}>
             {binaryAnalysisResult.map((item, idx) => (
@@ -450,81 +436,98 @@ function App() {
 
   const Main = () => {
     return (
-      <div>
+      <div className={styles.parent}>
         <header>
-          <h1>AsmDepictor</h1>
-          <h2>AsmDepictor information</h2>
-          <span>The file size limit is 2mb, and the analysis time limit is 60 seconds.<br></br>
-            If there is a timeout, upload a smaller file.<br></br>
-            The file formats that can be analyzed are ELF, 64-bit, and x86-64.</span>
+          <h1>@</h1>
+          {/* <h1>AsmDepictor</h1> */}
+          <h2>is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.</h2>
+          <h3>The file size limit is 2mb, and the analysis time limit is 60 seconds. If there is a timeout, upload a smaller file. The file formats that can be analyzed are ELF, 64-bit, and x86-64.</h3>
         </header>
 
         <hr></hr>
 
         <div className={styles.wrapper}>
-          <section className={styles.uploadBinaryFile}>
-            <h4>Upload your binary file</h4>
-            <input type="text" disabled="disabled" value={selectedFileName} />
-            <label className={styles.upload_label} htmlFor={isLoading ? null : "file"}>Upload</label>
-            <input className={styles.upload_input} type="file" id="file" name="file" onChange={onFileChange} />
-            <input className={styles.upload_delete_button} type="button" value="Delete" onClick={onFileDelete} />
-          </section>
 
-          <section className={styles.exampleBinaryFile}>
-            <h4>Or check out one of these samples</h4>
-            <select className={styles.exampleSelect} disabled={isLoading} value={selectExampleFile} onChange={SelectBinaryFile}>
-              <option value="0">Select Example File</option>
-              <option value="1">{example_list[1]}</option>
-              <option value="2">{example_list[2]}</option>
-              <option value="3">{example_list[3]}</option>
-              <option value="4">{example_list[4]}</option>
-              <option value="5">{example_list[5]}</option>
-              <option value="6">{example_list[6]}</option>
-              <option value="7">{example_list[7]}</option>
-              <option value="8">{example_list[8]}</option>
-              <option value="9">{example_list[9]}</option>
-            </select>
-            <input className={styles.upload_delete_button} type="button" value="Delete" onClick={onSelectedFileDelete} />
-          </section>
+          <div className={styles.setting}>
 
-          <section className={styles.selectModel}>
-            <h4>Select the model</h4>
-            <select className={styles.modelSelect} disabled={isLoading} value={selectModel} onChange={SelectModel}>
-              <option value="0">Select Model</option>
-              <option value="1">{model_list[1]}</option>
-              <option value="2">{model_list[2]}</option>
-              <option value="3">{model_list[3]}</option>
-            </select>
-          </section>
+            <section className={styles.uploadBinaryFile}>
+              <h4>Upload your binary file</h4>
+              <div>
+                <input className={styles.upload_text} type="text" disabled="disabled" value={selectedFileName} />
+                <label className={styles.upload_label} htmlFor={isLoading ? null : "file"}>Upload</label>
+                <input className={styles.upload_input} type="file" id="file" name="file" onChange={onFileChange} />
+                <input className={styles.upload_delete_button} type="button" value="Delete" onClick={onFileDelete} />
+              </div>
+              
+            </section>
+          
+            <section className={styles.exampleBinaryFile}>
+              <h4>Or check out one of these samples</h4>
+              <div>
+                <select className={styles.exampleSelect} disabled={isLoading} value={selectExampleFile} onChange={SelectBinaryFile}>
+                  <option value="0">Select Example File</option>
+                  <option value="1">{example_list[1]}</option>
+                  <option value="2">{example_list[2]}</option>
+                  <option value="3">{example_list[3]}</option>
+                  <option value="4">{example_list[4]}</option>
+                  <option value="5">{example_list[5]}</option>
+                  <option value="6">{example_list[6]}</option>
+                  <option value="7">{example_list[7]}</option>
+                  <option value="8">{example_list[8]}</option>
+                  <option value="9">{example_list[9]}</option>
+                </select>
+                <input className={styles.example_delete_button} type="button" value="Delete" onClick={onSelectedFileDelete} />
+              </div>
+            </section>
 
-          <button
-            className={styles.AnalysisButton}
-            onClick={AnalysisButtonClick}>
-            Analysis
-          </button>
+            <section className={styles.selectModel}>
+              <h4>Select the model</h4>
+              <div>
+                <select className={styles.modelSelect} disabled={isLoading} value={selectModel} onChange={SelectModel}>
+                  <option value="0">Select Model</option>
+                  <option value="1">{model_list[1]}</option>
+                  {/* <option value="2">{model_list[2]}</option>
+                  <option value="3">{model_list[3]}</option> */}
+                </select>
+                <button
+                  className={styles.AnalysisButton}
+                  onClick={AnalysisButtonClick}>
+                  Analysis
+                </button>
+              </div>
+            </section>
+          </div>
+          <div className={styles.analysis_info}>
+            <AnalysisInfo />
+          </div>
+        </div>
+        <div>
+           {loadingFinish && (isStripped ? <ShowResultStripped /> : <ShowResult />)}
         </div>
       </div>
     )
   }
 
   const AnalysisInfo = () => {
-    return (
-      <div className={styles.analysis_info}>
-        Analyzing {selectedFileNameForNoRendering}... {sec}s
-        <br></br>
-        Analyzing binary file{analysisFinish ? "... done" : ".".repeat((sec % 3) + 1)}
-        <br></br>
-        {!analysisFinish ? "Predicting function name..." : predictionFinish ? "Predicting function name... done" : "Predicting function name" + ".".repeat((sec % 3) + 1)}
-      </div>
-    )
+    if (isLoading || loadingFinish)
+      return (
+      <div>
+        <div>Analyzing {selectedFileNameForNoRendering}... {sec}s</div>
+        <div>Analyzing binary file{analysisFinish ? "... done" : ".".repeat((sec % 3) + 1)}</div>
+        <div>{!analysisFinish ? "Predicting function name..." : predictionFinish ? "Predicting function name... done" : "Predicting function name" + ".".repeat((sec % 3) + 1)}</div>
+      </div>);
+    else return(
+    <div>
+      <h1>Select and analyze the binary file.</h1>      
+    </div>
+
+    );
   }
 
   // 전체 렌더링
   return (
     <div>
       <Main />
-      {(isLoading || loadingFinish) && <AnalysisInfo />}
-      {loadingFinish && (isStripped ? <ShowResultStripped /> : <ShowResult />)}
     </div>
   )
 }
