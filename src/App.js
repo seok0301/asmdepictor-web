@@ -3,7 +3,7 @@ import React, { useState, useRef } from "react";
 import styles from './styles.module.css'
 
 const PORT = 8088
-const IP = "115.145.172.80"
+const IP = "***.***.***.***"
 const TIMEOUT = 60
 
 const example_list = ["", "diff", "dselect", "ex20_strip", "g-ir-compiler", "lsipc", "lsipc_strip", "ltrace", "lvmlockd", "pf_strip"];
